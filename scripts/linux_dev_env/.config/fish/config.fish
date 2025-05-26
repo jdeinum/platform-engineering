@@ -46,9 +46,6 @@ function wgr
     wgd; and wgu
 end
 
-fish_add_path "$HOME/.nix-profile/bin"
-fish_add_path "$HOME/.nix-profile/sbin"
 
 # set starship as our default prompt
 starship init fish | source
-

@@ -1,12 +1,12 @@
 install_required_packages() {
   # update the package repositories
   # sudo pacman -Syu 
-  pacman -Syu  --noconfirm
+  pacman -Syu 
 
   # first thing we'll do is install the required packages for yay
   # an AUR helper that makes managing the AUR a bit easier
   if ! command -v yay >/dev/null 2>&1; then
-    pacman -S --needed git base-devel  --noconfirm && \
+    pacman -S --needed git base-devel && \
       git clone https://aur.archlinux.org/yay.git && \
       cd yay && makepkg -si
   fi

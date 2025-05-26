@@ -1,63 +1,62 @@
-
 install_required_packages() {
-  set -euo pipefail
 
-  # we split this up because nix cant be installed as root, and avoids us from
-  # needing to use sudo in the default script.
-  echo "[*] Checking for required tools (curl, xz-utils)"
-  for pkg in curl xz-utils; do
-    if ! command -v "${pkg%%-*}" >/dev/null 2>&1; then
-      echo "[-] '$pkg' not found. Installing via apt..."
-      apt-get update
-      apt-get install -y "$pkg"
-    else
-      echo "[+] '$pkg' is already installed."
-    fi
-  done
+apt update
+apt install -y \
+    curl \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    apt-transport-https
 
-  echo "[*] Installing Nix package manager..."
-  install -d -m755 -o "$(id -u)" -g "$(id -g)" /nix || true
-  curl -L https://nixos.org/nix/install | sh
-  # shellcheck disable=SC1090
-  source "$HOME/.nix-profile/etc/profile.d/nix.sh"
-  export NIX_PATH="$HOME/.nix-defexpr/channels"
-  export PATH="$HOME/.nix-profile/bin:$HOME/.nix-profile/sbin:$PATH"
+# Install packages from Debian repositories
+apt install -y \
+    alacritty \
+    libfuse2 \
+    git \
+    fish \
+    cowsay \
+    lolcat \
+    fzf \
+    ripgrep \
+    bat \
+    htop \
+    tldr \
+    tmux \
+    fonts-jetbrains-mono \
+    fonts-noto-color-emoji \
+    clangd \
+    gcc \
+    wget;
 
-  echo "[*] Installing packages from nixpkgs..."
-  export NIXPKGS_ALLOW_UNFREE=1
-  nix-env -iA nixpkgs.alacritty \
-                 nixpkgs.git \
-                 nixpkgs.fish \
-                 nixpkgs.azure-cli \
-                 nixpkgs.awscli2 \
-                 nixpkgs.google-cloud-sdk \
-                 nixpkgs.cowsay \
-                 nixpkgs.lolcat \
-                 nixpkgs.asciiquarium \
-                 nixpkgs.terraform \
-                 nixpkgs.helm \
-                 nixpkgs.opentofu \
-                 nixpkgs.kubectl \
-                 nixpkgs.k9s \
-                 nixpkgs.minikube \
-                 nixpkgs.skaffold \
-                 nixpkgs.helmfile \
-                 nixpkgs.stern \
-                 nixpkgs.kubie \
-                 nixpkgs.lazygit \
-                 nixpkgs.fzf \
-                 nixpkgs.ripgrep \
-                 nixpkgs.bat \
-                 nixpkgs.htop \
-                 nixpkgs.tldr \
-                 nixpkgs.eza \
-                 nixpkgs.starship \
-                 nixpkgs.neovim \
-                 nixpkgs.tmux \
-                 nixpkgs.jetbrains-mono \
-                 nixpkgs.gcc \
-                 nixpkgs.noto-fonts-emoji
+wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
+echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | tee /etc/apt/sources.list.d/gierens.list
+chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
+apt update && apt install -y eza
 
-  echo "All tools installed successfully!"
+curl -LO https://github.com/neovim/neovim/releases/download/v0.11.1/nvim-linux-x86_64.appimage
+mv nvim-linux-x86_64.appimage /usr/local/bin/nvim_appimage
+chmod u+x /usr/local/bin/nvim_appimage
+/usr/local/bin/nvim_appimage --appimage-extract && \
+mv squashfs-root /opt/nvim && \
+ln -s /opt/nvim/AppRun /usr/local/bin/nvim
+
+
+curl -sS https://starship.rs/install.sh | sh -s -- --yes
+
+
+# curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+#
+# # Add AWS CLI v2 repository (Install from AWS's official method)
+# echo "Installing AWS CLI v2"
+# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+# unzip awscliv2.zip
+# ./aws/install 
+#
+# # Add Google Cloud SDK repository
+# curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+# echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+# apt-get update && apt install -y google-cloud-cli
+
+echo "Installation complete!"
+
 }
-
