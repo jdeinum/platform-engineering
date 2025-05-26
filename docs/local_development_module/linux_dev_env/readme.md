@@ -1,38 +1,39 @@
 # Linux Based Dev Environment
 
+# Usage
 
-# Usage 
-
-## Option 1: Ephemeral 
+## Option 1: Ephemeral
 
 ### Nix (Recommended)
 
->  Ensure you have [nix](https://nixos.org/) installed and
+> Ensure you have [nix](https://nixos.org/) installed and
 > [flake](https://nixos.wiki/wiki/flakes) support enabled
 
 > **IMPORTANT**: This is not a pure shell, do not make undesired changes to your
 > system.
 
+> **NOTE:** If you want to play around with tmux in the nix shell, run it
+> manually with `tmux`
+
 ```bash
-# change to linux_env root 
+# change to linux_env root
 # cd linux_env
 
-# start the shell 
+# start the shell
 # this will take some time to build
 nix develop
 ```
 
-
-### Docker 
+### Docker
 
 > Ensure you have [docker](https://docs.docker.com/engine/install/) installed
 > and the compose [plugin](https://docs.docker.com/compose/install/)
 
 ```bash
-# change to linux_env root 
-# cd linux_env 
+# change to linux_env root
+# cd linux_env
 
-# start the shell 
+# start the shell
 docker compose run --build dev && docker compose down
 ```
 
@@ -41,15 +42,12 @@ docker compose run --build dev && docker compose down
 > **NOTE:** This script will only work on Debian12 & Arch Linux
 
 ```bash
-# change to linux_env root 
-# cd linux_env 
+# change to linux_env root
+# cd linux_env
 
-# install 
+# install
 ./scripts/linux_env.sh
 ```
-
-
-
 
 # Overview
 
@@ -220,10 +218,8 @@ them to start flying around your buffers.
 
 ## Neovim
 
-> **IMPORTANT:**  Only keybind overrides are shown here. See the original
+> **IMPORTANT:** Only keybind overrides are shown here. See the original
 > projects for a full range of keybinds for plugins
-
-
 
 ### Core
 
@@ -310,75 +306,69 @@ them to start flying around your buffers.
 | v       | `<leader>sf` | Save code screenshot as file      |
 | v       | `<leader>ss` | Create code screenshot            |
 
-
 ### Telescope
 
-| Mode(s) | Keybind              | Description         |
-| ------- | ------------------- | ------------------- |
-| n       | `<localleader>ff`   | Find files          |
-| n       | `<localleader>gf`   | Find Word           |
-| n       | `<localleader>gg`   | Grep                |
-| n       | `<localleader>b`    | Buffers             |
-| n       | `<localleader>m`    | Marks               |
-| n       | `<localleader>u`    | Spell suggest       |
-| n       | `<localleader>x`    | Old files           |
-| n       | `<localleader>;`    | Command history     |
-| n       | `<localleader>:`    | Commands            |
-| n       | `<localleader>/`    | Search history      |
-| n       | `<leader>/`         | Buffer find         |
-| n       | `<leader>sk`        | Key Maps            |
-| n       | `<leader>sm`        | Man Pages           |
-
+| Mode(s) | Keybind           | Description     |
+| ------- | ----------------- | --------------- |
+| n       | `<localleader>ff` | Find files      |
+| n       | `<localleader>gf` | Find Word       |
+| n       | `<localleader>gg` | Grep            |
+| n       | `<localleader>b`  | Buffers         |
+| n       | `<localleader>m`  | Marks           |
+| n       | `<localleader>u`  | Spell suggest   |
+| n       | `<localleader>x`  | Old files       |
+| n       | `<localleader>;`  | Command history |
+| n       | `<localleader>:`  | Commands        |
+| n       | `<localleader>/`  | Search history  |
+| n       | `<leader>/`       | Buffer find     |
+| n       | `<leader>sk`      | Key Maps        |
+| n       | `<leader>sm`      | Man Pages       |
 
 ### Trouble
 
-| Mode(s) | Keybind      | Description                            |
-| ------- | ------------ | -------------------------------------- |
-| n       | `<leader>xx` | Diagnostics (Trouble)                  |
-| n       | `<leader>xX` | Buffer Diagnostics (Trouble)           |
-| n       | `<leader>cs` | Symbols (Trouble)                      |
-| n       | `<leader>cl` | LSP Definitions / references / ...     |
-| n       | `<leader>xL` | Location List (Trouble)                |
-| n       | `<leader>xQ` | Quickfix List (Trouble)                |
-
+| Mode(s) | Keybind      | Description                        |
+| ------- | ------------ | ---------------------------------- |
+| n       | `<leader>xx` | Diagnostics (Trouble)              |
+| n       | `<leader>xX` | Buffer Diagnostics (Trouble)       |
+| n       | `<leader>cs` | Symbols (Trouble)                  |
+| n       | `<leader>cl` | LSP Definitions / references / ... |
+| n       | `<leader>xL` | Location List (Trouble)            |
+| n       | `<leader>xQ` | Quickfix List (Trouble)            |
 
 ### Which-Key
 
-| Mode(s) | Keybind     | Description                                |
-| ------- | ----------- | ------------------------------------------ |
-| n       | `<leader>?` | Buffer Local Keymaps (which-key)           |
+| Mode(s) | Keybind     | Description                      |
+| ------- | ----------- | -------------------------------- |
+| n       | `<leader>?` | Buffer Local Keymaps (which-key) |
 
 ### Icon Picker
 
-| Mode(s) | Keybind     | Description                                |
-| ------- | ----------- | ------------------------------------------ |
-| n       | `<Leader>li`| Icon Picker (Icon Picker Normal)           |
-
+| Mode(s) | Keybind      | Description                      |
+| ------- | ------------ | -------------------------------- |
+| n       | `<Leader>li` | Icon Picker (Icon Picker Normal) |
 
 ### Flash
 
-| Mode(s) | Keybind      | Description                            |
-| ------- | ------------ | -------------------------------------- |
-| n, x, o | `s`          | Flash                                  |
-| n, x, o | `S`          | Flash Treesitter                       |
-| o       | `r`          | Remote Flash                           |
-| o, x    | `R`          | Treesitter Search                      |
-| c       | `<c-s>`      | Toggle Flash Search                    |
+| Mode(s) | Keybind | Description         |
+| ------- | ------- | ------------------- |
+| n, x, o | `s`     | Flash               |
+| n, x, o | `S`     | Flash Treesitter    |
+| o       | `r`     | Remote Flash        |
+| o, x    | `R`     | Treesitter Search   |
+| c       | `<c-s>` | Toggle Flash Search |
 
 ### Spectre
 
-| Mode(s) | Keybind      | Description                            |
-| ------- | ------------ | -------------------------------------- |
-| n       | `<leader>S`  | Toggle Spectre                         |
+| Mode(s) | Keybind     | Description    |
+| ------- | ----------- | -------------- |
+| n       | `<leader>S` | Toggle Spectre |
 
 ### Vim Tmux Navigator
 
-| Mode(s) | Keybind   | Description               |
-| ------- | --------- | ------------------------- |
-| n       | `<C-h>`   | Navigate to left pane     |
-| n       | `<C-j>`   | Navigate to below pane    |
-| n       | `<C-k>`   | Navigate to above pane    |
-| n       | `<C-l>`   | Navigate to right pane    |
-| n       | `<C-\>`   | Navigate to previous pane |
-
-
+| Mode(s) | Keybind | Description               |
+| ------- | ------- | ------------------------- |
+| n       | `<C-h>` | Navigate to left pane     |
+| n       | `<C-j>` | Navigate to below pane    |
+| n       | `<C-k>` | Navigate to above pane    |
+| n       | `<C-l>` | Navigate to right pane    |
+| n       | `<C-\>` | Navigate to previous pane |

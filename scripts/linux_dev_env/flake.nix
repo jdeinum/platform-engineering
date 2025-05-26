@@ -15,7 +15,7 @@
         };
 
         # Use toPath to resolve the local .config path properly
-        configDir = builtins.toPath ../.config;
+        configDir = builtins.toPath ./.config;
       in {
         devShells.default = pkgs.mkShell {
           name = "dev-env";
