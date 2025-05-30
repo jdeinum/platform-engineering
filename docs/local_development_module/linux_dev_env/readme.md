@@ -144,7 +144,7 @@ Your text editor is your most personal tool. This setup provides a powerful, cus
 
 ### ✨ Neovim - Text Editor
 
-> **🔑 Leader Key:** `<space>` **Local Leader:** `\`
+> **🔑 Leader Key:** `<space>` **Local Leader:** `;`
 
 #### 🧭 Navigation
 | Combo | Action |
