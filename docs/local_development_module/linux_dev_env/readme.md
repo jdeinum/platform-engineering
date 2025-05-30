@@ -5,17 +5,11 @@ A powerful, efficient development environment designed for Linux users who want 
 
 ## 🚀 Quick Start Options
 
-
 | Method | 💾 Persistence | 📋 Requirements |
-
 |--------|---------------|-----------------|
-
 | **🔥 Nix (Recommended)** | Temporary | [Nix](https://nixos.org/) + [Flakes](https://nixos.wiki/wiki/flakes) |
-
 | **🐳 Docker** | Temporary | [Docker](https://docs.docker.com/engine/install/) + [Compose](https://docs.docker.com/compose/install/) |
-
 | **💻 Full Installation** | Permanent | Debian 12 or Arch Linux |
-
 
 ---
 
