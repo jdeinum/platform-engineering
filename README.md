@@ -1,17 +1,31 @@
-## 📑 Table of Contents
-- [Project Overview](#project-overview)
-- [Platform Engineering Knowledge Base](#platform-engineering-knowledge-base)
-- [Learning & Community](#learning--community)
-- [Contributing](#contributing)
+<!-- Centered image and badges -->
+<p align="center">
+  <img src="https://github.com/codetocloudinc/artwork/blob/main/examples/images/current/code_to_cloud_1920_x_1080_desktop.png?raw=true" alt="Code To Cloud Logo" width="80%" height="90%" />
+</p>
 
-<div align="center" style="margin: 1em 0;">
-  <a class="github-button" href="https://github.com/codetocloudinc/platform-engineering-hub" data-icon="octicon-star" data-size="default" data-show-count="true" aria-label="Star codetocloudinc/platform-engineering-hub on GitHub">Star</a>
-  <a class="github-button" href="https://github.com/codetocloudinc/platform-engineering-hub/fork" data-size="default" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork codetocloudinc/platform-engineering-hub on GitHub">Fork</a>
-  <a class="github-button" href="https://github.com/codetocloudinc/platform-engineering-hub/issues" data-size="default" data-icon="octicon-issue-opened" data-show-count="true" aria-label="Issues for codetocloudinc/platform-engineering-hub on GitHub">Issues</a>
-  <a class="github-button" href="https://github.com/codetocloudinc/platform-engineering-hub/graphs/contributors" data-size="default" data-icon="octicon-organization" aria-label="Contributors to codetocloudinc/platform-engineering-hub on GitHub">Contributors</a>
-  <a class="github-button" href="https://www.codetocloud.io" data-size="default" aria-label="Website">Website</a>
-  <a class="github-button" href="https://www.codetocloud.io/joinus" data-size="default" aria-label="Join our Slack">Join our Slack</a>
-</div>
+<p align="center">
+  <a href="https://github.com/codetocloudinc/platform-engineering-hub">
+    <img src="https://img.shields.io/github/stars/codetocloudinc/platform-engineering-hub?style=social" alt="GitHub stars">
+  </a>
+  <a href="https://github.com/codetocloudinc/platform-engineering-hub/fork">
+    <img src="https://img.shields.io/github/forks/codetocloudinc/platform-engineering-hub?style=social" alt="GitHub forks">
+  </a>
+  <a href="https://github.com/codetocloudinc/platform-engineering-hub/issues">
+    <img src="https://img.shields.io/github/issues/codetocloudinc/platform-engineering-hub?style=social" alt="GitHub issues">
+  </a>
+  <a href="https://github.com/codetocloudinc/platform-engineering-hub/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/codetocloudinc/platform-engineering-hub?style=social" alt="GitHub contributors">
+  </a>
+</p>
+
+---
+
+## 📑 Table of Contents
+
+- [Project Overview](#-project-overview)
+- [Platform Engineering Knowledge Base](#-platform-engineering-knowledge-base)
+- [Learning & Community](#-learning--community)
+- [Contributing](#-contributing)
 
 ---
 
