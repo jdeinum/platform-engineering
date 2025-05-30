@@ -152,14 +152,6 @@ Your text editor is your most personal tool. This setup provides a powerful, cus
 
 > **🔑 Leader Key:** `<space>` **Local Leader:** `\`
 
-#### 🗂️ File Operations
-| Combo | Action |
-|-------|--------|
-| `<leader>w` | 💾 Save file |
-| `<leader>o` | 📁 Open new file |
-| `<leader><leader>` | 🔄 Switch to last buffer |
-| `<C-p>` | 🔍 Find files (fuzzy finder) |
-
 #### 🧭 Navigation
 | Combo | Action |
 |-------|--------|
@@ -167,6 +159,7 @@ Your text editor is your most personal tool. This setup provides a powerful, cus
 | `H/L` | ⏮️⏭️ Go to start/end of line |
 | `s` + 2 chars | ⚡ Flash jump to any text |
 | `<Left/Right>` | 📑 Previous/Next buffer |
+| `<leader><leader>` | 🔄 Switch to last buffer |
 
 #### 🔍 Search & Replace
 | Combo | Action |
@@ -179,8 +172,8 @@ Your text editor is your most personal tool. This setup provides a powerful, cus
 #### 🗃️ File Explorer
 | Combo | Action |
 |-------|--------|
-| `\e` | 📁 Toggle file explorer |
-| `\a` | 👁️ Reveal current file in explorer |
+| `<leader>e` | 📁 Toggle file explorer |
+| `<leader>a` | 👁️ Reveal current file in explorer |
 
 #### 🔧 Code Features
 | Combo | Action |
@@ -195,10 +188,10 @@ Your text editor is your most personal tool. This setup provides a powerful, cus
 #### 🔍 Telescope (Fuzzy Finder)
 | Combo | Action |
 |-------|--------|
-| `\ff` | 📁 Find files |
-| `\gg` | 🔍 Search in files (grep) |
-| `\b` | 📑 List buffers |
-| `\m` | 🔖 Show marks |
+| `<local-leader>ff` | 📁 Find files |
+| `<local-leader>gg` | 🔍 Search in files (grep) |
+| `<local-leader>b` | 📑 List buffers |
+| `<local-leader>m` | 🔖 Show marks |
 
 #### 🚨 Diagnostics & Trouble
 | Combo | Action |
