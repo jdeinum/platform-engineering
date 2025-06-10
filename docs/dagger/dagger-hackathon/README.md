@@ -110,7 +110,7 @@ The below steps will take you through making a breaking change to a file in our 
 
 - Rename `docs/dagger/dagger-hackathon/.env-example` to `.env`  
 - Populate the placeholder keys with real values (we will provide for Hackathon day)  
-- Create environment variables for `GITHUB_TOKEN`, `AZURE_API_KEY`, `AZURE_API_ENDPOINT`   
+- Create environment variables for `GITHUB_TOKEN` and `AZURE_OPENAI_API_KEY`   
   A GitHub Token can be created in GitHub under Settings → Developer Settings → Create a classic token  
   Example:
   ```bash
@@ -124,8 +124,8 @@ The below steps will take you through making a breaking change to a file in our 
     --github_branch="BRANCH-NAME" \
     --github_repo="USERNAME/REPO-NAME" \
     --github_token="GITHUB_TOKEN" \
-    --azure_api_key="AZURE_API_KEY" \
-    --azure_endpoint="AZURE_API_ENDPOINT" \
+    --azure_openai_api_key="AZURE_OPENAI_API_KEY" \
+    --azure_openai_endpoint="ENDPOINT-URL" \
     fix-my-tests-agent
   ```
 
