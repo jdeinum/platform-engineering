@@ -134,10 +134,8 @@ The below steps will take you through making a breaking change to a file in our 
   ```
 The Azure OpenAI details can be found below:
 
-```bash
-  export AZURE_OPENAI_API_KEY="FT0Dd0iIglkzGbizOMUp79k0Frea7neDtVXRhFZ5m39CJJJcdfxFJQQJ99BEACYeBjFXJ3w3AAABACO"
-  export AZURE_API_ENDPOINT="https://vdfvdf.openai.azure.com/"
-```
+- Azure OpenAI API Key: FT0Dd0iIglkzGbizOMUp79k0Frea7neDtVXRhFZ5m39CJJJcdfxFJQQJ99BEACYeBjFXJ3w3AAABACO
+- Azure OpenAI Endpoint: https://vdfvdf.openai.azure.com/
 
 > **Note:** The full API key will be provided during the hackathon.
 
