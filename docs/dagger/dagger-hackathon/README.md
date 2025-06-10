@@ -126,7 +126,7 @@ The below steps will take you through making a breaking change to a file in our 
 
 - Rename `docs/dagger/dagger-hackathon/.env-example` to `.env`  
 - Populate the placeholder keys with real values (we will provide for Hackathon day)  
-- Create environment variables for `GITHUB_TOKEN` and `AZURE_OPENAI_API_KEY`   
+- Create environment variables for `GITHUB_TOKEN` and `AZURE_OPENAI_API_KEY`
   A GitHub Token can be created in GitHub under Settings → Developer Settings → Create a classic token  
   Example:
   ```bash
@@ -135,7 +135,7 @@ The below steps will take you through making a breaking change to a file in our 
 The Azure OpenAI details can be found below:
 
 ```bash
-  export AZURE_API_KEY="FT0Dd0iIglkzGbizOMUp79k0Frea7neDtVXRhFZ5m39CJJJcdfxFJQQJ99BEACYeBjFXJ3w3AAABACO"
+  export AZURE_OPENAI_API_KEY="FT0Dd0iIglkzGbizOMUp79k0Frea7neDtVXRhFZ5m39CJJJcdfxFJQQJ99BEACYeBjFXJ3w3AAABACO"
   export AZURE_API_ENDPOINT="https://vdfvdf.openai.azure.com/"
 ```
 
