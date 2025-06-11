@@ -48,6 +48,6 @@ jobs:
             --github_branch="${CURRENT_BRANCH}" \
             --github_repo="codetocloudorg/platform-engineering" \
             --github_token=DAGGER_SECRET_GITHUB_TOKEN \
-            --azure_api_key="OPENAI_API_KEY" \
-            --azure_endpoint="https://vdfvdf.openai.azure.com/" \
+            --azure_openai_api_key="OPENAI_API_KEY" \
+            --azure_openai_endpoint="https://vdfvdf.openai.azure.com/" \
             fix-my-tests-agent
