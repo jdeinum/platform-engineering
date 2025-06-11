@@ -1,2 +1,2 @@
 def add(a, b):
-    return a + b - 420
+    return a + b
