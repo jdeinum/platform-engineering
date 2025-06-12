@@ -154,6 +154,8 @@ class DaggerHackathon:
             change=structured_results_json["change"]
         )
 
+ 
+
     @function
     async def CreatePrSuggestion(
         self, 
@@ -168,19 +170,23 @@ class DaggerHackathon:
             GitHubPrSuggestionResult
         """
 
+        # Hardcoding the values based on your provided shell command
         command_to_execute = [
-            "gh", "api",
-            "--method", "POST",
-            "-H", "Accept: application/vnd.github+json",
-            "-H", "X-GitHub-Api-Version: 2022-11-28",
-            f"/repos/{self.github_repo}/pulls/{pr_metadata.pr_number}/comments",
-            "-f", f"body=```suggestion\n{proposed_code_changes.change}\n```",
+            "gh", "api", 
+            "--method", "POST", 
+            "-H", "Accept: application/vnd.github+json", 
+            "-H", "X-GitHub-Api-Version: 2022-11-28", 
+            f"/repos/{self.github_repo}/pulls/{pr_metadata.pr_number}/comments", 
+            "-f", f"body=```suggestion\n{proposed_code_changes.change}\n```", 
             "-f", f"commit_id={pr_metadata.commit_id}",
             "-f", f"path={proposed_code_changes.path}",
+            "-F", "start_line=1", 
+            "-f", "start_side=RIGHT",
             "-F", f"line={proposed_code_changes.line}",
-            "-f", "side=RIGHT"
-            ]
+            "-f", "side=RIGHT",
+        ]
 
+        # Run the command in a Dagger container
         container = (
             dag.container()
             .from_("alpine:latest")
@@ -196,14 +202,21 @@ class DaggerHackathon:
             .with_exec(command_to_execute)
         )
 
+        # Capture the response logs from stdout
         pr_comment_logs = await container.stdout()
 
-        pr_comment_logs_json = json.loads(pr_comment_logs)
+        # Parse the response to get the comment body and URL
+        try:
+            pr_comment_logs_json = json.loads(pr_comment_logs)
+        except json.JSONDecodeError:
+            raise ValueError("Failed to parse the GitHub API response.")
 
+        # Return the GitHub PR suggestion result with body and URL
         return GitHubPrSuggestionResult(
             body=pr_comment_logs_json["body"],
             comment_url=pr_comment_logs_json["html_url"]
         )
+
 
     @function
     async def FixMyTestsAgent(
