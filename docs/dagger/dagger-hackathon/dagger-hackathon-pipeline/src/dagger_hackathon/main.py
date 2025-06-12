@@ -172,15 +172,15 @@ class DaggerHackathon:
 
         # Hardcoding the values based on your provided shell command
         command_to_execute = [
-            "gh", "api", 
-            "--method", "POST", 
-            "-H", "Accept: application/vnd.github+json", 
-            "-H", "X-GitHub-Api-Version: 2022-11-28", 
-            f"/repos/{self.github_repo}/pulls/{pr_metadata.pr_number}/comments", 
-            "-f", f"body=```suggestion\n{proposed_code_changes.change}\n```", 
+            "gh", "api",
+            "--method", "POST",
+            "-H", "Accept: application/vnd.github+json",
+            "-H", "X-GitHub-Api-Version: 2022-11-28",
+            f"/repos/{self.github_repo}/pulls/{pr_metadata.pr_number}/comments",
+            "-f", f"body=```suggestion\n{proposed_code_changes.change}\n```",
             "-f", f"commit_id={pr_metadata.commit_id}",
             "-f", f"path={proposed_code_changes.path}",
-            "-F", "start_line=1", 
+            "-F", "start_line=1",
             "-f", "start_side=RIGHT",
             "-F", f"line={proposed_code_changes.line}",
             "-f", "side=RIGHT",
