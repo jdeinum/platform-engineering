@@ -126,7 +126,7 @@ The below steps will take you through making a breaking change to a file in our 
 
 - Rename `docs/dagger/dagger-hackathon/.env-example` to `.env`  
 - Populate the placeholder keys with real values (we will provide for Hackathon day)  
-- Create environment variables for `GITHUB_TOKEN`, `AZURE_API_KEY`, `AZURE_API_ENDPOINT`   
+- Create environment variables for `GITHUB_TOKEN` and `AZURE_OPENAI_API_KEY`
   A GitHub Token can be created in GitHub under Settings → Developer Settings → Create a classic token  
   Example:
   ```bash
@@ -134,10 +134,8 @@ The below steps will take you through making a breaking change to a file in our 
   ```
 The Azure OpenAI details can be found below:
 
-```bash
-  export AZURE_API_KEY="FT0Dd0iIglkzGbizOMUp79k0Frea7neDtVXRhFZ5m39CJJJcdfxFJQQJ99BEACYeBjFXJ3w3AAABACO"
-  export AZURE_API_ENDPOINT="https://vdfvdf.openai.azure.com/"
-```
+- Azure OpenAI API Key: FT0Dd0iIglkzGbizOMUp79k0Frea7neDtVXRhFZ5m39CJJJcdfxFJQQJ99BEACYeBjFXJ3w3AAABACO
+- Azure OpenAI Endpoint: https://vdfvdf.openai.azure.com/
 
 > **Note:** The full API key will be provided during the hackathon.
 
@@ -148,8 +146,8 @@ The Azure OpenAI details can be found below:
     --github_branch="BRANCH-NAME" \
     --github_repo="USERNAME/REPO-NAME" \
     --github_token="GITHUB_TOKEN" \
-    --azure_api_key="AZURE_API_KEY" \
-    --azure_endpoint="AZURE_API_ENDPOINT" \
+    --azure_openai_api_key="AZURE_OPENAI_API_KEY" \
+    --azure_openai_endpoint="ENDPOINT-URL" \
     fix-my-tests-agent
   ```
 
