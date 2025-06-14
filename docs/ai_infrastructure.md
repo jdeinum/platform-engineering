@@ -1,6 +1,6 @@
 # 🤖 AI Infrastructure for Platform Engineering
 
-**AI infrastructure** refers to the foundational systems, tools, and platforms required to develop, deploy, and scale artificial intelligence (AI) and machine learning (ML) workloads. For platform engineering teams, building robust AI infrastructure means enabling data scientists, ML engineers, and developers to efficiently train, serve, and manage AI models—while ensuring scalability, security, and operational excellence.
+**AI Infrastructure** refers to the foundational systems, tools, and platforms required to develop, deploy, and scale artificial intelligence (AI) and machine learning (ML) workloads. For platform engineering teams, building robust AI infrastructure means enabling data scientists, ML engineers, and developers to efficiently train, serve, and manage AI models—while ensuring scalability, security, and operational excellence.
 
 ---
 
@@ -52,10 +52,9 @@ Explore these key submodules to learn how platform engineering teams can impleme
 ## 📚 Further Reading
 
 - [KServe: Model Serving on Kubernetes](https://kserve.github.io/website/)
-- [Azure Machine Learning + Kubernetes](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-deploy-kubernetes)
+- [Azure Machine Learning + Kubernetes](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-attach-kubernetes-anywhere?view=azureml-api-2)
 - [Seldon Core: Open Source Model Serving](https://docs.seldon.io/projects/seldon-core/en/latest/)
 - [Google Vertex AI](https://cloud.google.com/vertex-ai)
-- [AWS SageMaker](https://aws.amazon.com/sagemaker/)
 - [Model Context Protocol (Official Site)](https://modelcontextprotocol.io/introduction#general-architecture)
 
 ---
