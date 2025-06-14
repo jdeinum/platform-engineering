@@ -63,7 +63,9 @@ The platform engineering tooling landscape is rapidly evolving, encompassing a w
 - **Infrastructure as Code (IaC)** tools  
 - **GitOps workflows**  
 - **Service meshes**  
-- **Cloud-native runtime environments**  
+- **Cloud-native runtime environments**
+- **LLM Ops / Orchestration / AI infrastructure**
+  
 
 For a deeper dive into the current state of platform engineering and its tooling ecosystem, check out this overview:  
 - **[Platform Engineering Landscape Overview](docs/platform_engineering_landscape.md)** 🚀
@@ -79,6 +81,7 @@ Platform Engineering encompasses several key components:
 - **[Cloud-Native Architectures](docs/cloud_native.md)**
 - **[Internal Development Platforms](docs/internal_development_platforms.md)**
 - **[Kubernetes](docs/kubernetes.md)**
+- **[AI Infrastructure](docs/ai_infrastructure.md)**
 
 ### 🏗️ Platform Engineering Reference Architecture
 A **Platform Engineering Reference Architecture** provides a standardized framework for building scalable, secure, and efficient internal developer platforms (IDPs). It integrates key components like **Infrastructure as Code (IaC)**, **GitOps workflows**, **Kubernetes-based orchestration**, and **self-service developer portals** to streamline cloud-native application delivery.
