@@ -36,7 +36,7 @@ To help code-to-cloud teams quickly leverage the Model Context Protocol, we’ve
 
 Explore the submodule below for setup instructions, usage examples, and best practices:
 
-- [**Getting Started with MCP Servers**](getting_started_with_mcps.md)  
+- [**Getting Started with MCP Servers**](getting_started_with_mcp.md)  
   *A curated guide to installing, configuring, and using popular MCP servers for rapid integration with your LLM workflows.*
 
 ---
