@@ -28,7 +28,7 @@ def main():
         response_format=ProposedCodeChangesPydantic,
     )
 
-    structured_output = completion.choices[0].message.parsed
+    structured_output = completion.choices[0].message.content
 
     print(structured_output)
 
