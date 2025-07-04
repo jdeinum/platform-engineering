@@ -30,10 +30,14 @@ done
 
 # Create k3d cluster
 echo "🚀 Creating k3d cluster: $CLUSTER_NAME"
-k3d cluster create "$CLUSTER_NAME" -p '8081:80@loadbalancer' --agents 2
+k3d cluster create "$CLUSTER_NAME" -p '80:80@loadbalancer' --agents 2
 
 echo "⏳ Waiting for nodes to become ready..."
 kubectl wait --for=condition=Ready nodes --all --timeout=60s
+
+# install traefik crds 
+echo "📦  Install traefik CRDs..."
+kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.5/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
 
 # Apply resources
 echo "📦 Applying Kubernetes resources..."

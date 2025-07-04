@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hello
+  labels:
+    app: hello
 spec:
   replicas: 1
   selector:
@@ -14,8 +16,6 @@ spec:
     spec:
       containers:
         - name: hello
-          image: hashicorp/http-echo
-          args:
-            - "-text=Hello from kubernetes!"
+          image: nginx:1.29.0-alpine
           ports:
-            - containerPort: 5678
+            - containerPort: 80
