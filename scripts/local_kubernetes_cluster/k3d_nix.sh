@@ -43,7 +43,7 @@ kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.5/docs/con
 echo "📦 Applying Kubernetes resources..."
 kubectl apply -f "$SCRIPT_DIR/deployment.yaml"
 kubectl apply -f "$SCRIPT_DIR/service.yaml"
-kubectl apply -f "$SCRIPT_DIR/ingress.yaml"
+kubectl apply -f "$SCRIPT_DIR/traefik_ingress.yaml"
 
 # Update /etc/hosts
 if grep -q "hello.example.com" /etc/hosts; then

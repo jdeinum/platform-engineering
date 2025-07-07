@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+usr/bin/env bash
 
 set -euo pipefail
 
@@ -22,7 +22,7 @@ fi
 for pkg in docker kind kubectl helm; do
   if ! command -v "$pkg" &> /dev/null; then
     echo "📦 Installing $pkg..."
-    nix-env -iA "nixpkgs.${pkg}"
+    nix-env -iA "nixpkgs.${pkg}" 
   else
     echo "✅ $pkg already installed."
   fi
@@ -30,20 +30,22 @@ done
 
 # Create k3d cluster
 echo "🚀 Creating kind cluster: $CLUSTER_NAME"
-kind create cluster --name "$CLUSTER_NAME"
+kind create cluster --name "$CLUSTER_NAME" --config "./resources/kind_cluster.yaml"
 
 echo "⏳ Waiting for nodes to become ready..."
-kubectl wait --for=condition=Ready nodes --all --timeout=60s
+kubectl wait --for=condition=Ready nodes --all --timeout=60s 
 
 # install nginx
 echo "📦 Installing nginx..."
-kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
+kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml 
 
 echo "⏳ Waiting for nginx to become ready..."
-kubectl wait -n ingress-nginx --for=condition=Ready nodes --all --timeout=60s
+kubectl wait -n ingress-nginx --for=condition=Ready pod --all --timeout=120s 
 
 # apply the example
 echo "📦 Applying Kubernetes resources..."
-kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/usage.yaml
+kubectl apply -f "$SCRIPT_DIR/deployment.yaml" 
+kubectl apply -f "$SCRIPT_DIR/service.yaml" 
+kubectl apply -f "$SCRIPT_DIR/nginx_ingress.yaml" 
 
-echo "✅ Done! Visit http://localhost:80/foo to make sure the ingress works"
+echo "✅ Done! Visit http://hello.example.com to see the Hello World app."
