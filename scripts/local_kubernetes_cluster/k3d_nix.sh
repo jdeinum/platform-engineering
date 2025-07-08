@@ -28,6 +28,10 @@ for pkg in docker k3d kubectl helm; do
   fi
 done
 
+# install traefik crds 
+echo "📦  Install traefik CRDs..."
+helm upgrade --install traefik-crds traefik/traefik-crds --namespace default --create-namespace
+
 # Create k3d cluster
 echo "🚀 Creating k3d cluster: $CLUSTER_NAME"
 k3d cluster create "$CLUSTER_NAME" -p '80:80@loadbalancer' --agents 2
@@ -35,9 +39,11 @@ k3d cluster create "$CLUSTER_NAME" -p '80:80@loadbalancer' --agents 2
 echo "⏳ Waiting for nodes to become ready..."
 kubectl wait --for=condition=Ready nodes --all --timeout=60s
 
-# install traefik crds 
-echo "📦  Install traefik CRDs..."
-kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.5/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+echo "⏳ Waiting for traefik to become ready..."
+kubectl wait --for=condition=complete job/helm-install-traefik -n kube-system --timeout=180s
+kubectl wait --for=condition=complete job/helm-install-traefik-crd -n kube-system --timeout=180s
+kubectl wait -n kube-system pod -l app.kubernetes.io/name=traefik --for=condition=Ready --timeout=180s
+
 
 # Apply resources
 echo "📦 Applying Kubernetes resources..."
