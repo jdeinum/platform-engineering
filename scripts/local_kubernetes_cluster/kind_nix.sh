@@ -46,6 +46,15 @@ kubectl wait -n ingress-nginx --for=condition=Ready pod --all --timeout=120s
 echo "📦 Applying Kubernetes resources..."
 kubectl apply -f "$SCRIPT_DIR/deployment.yaml" 
 kubectl apply -f "$SCRIPT_DIR/service.yaml" 
-kubectl apply -f "$SCRIPT_DIR/nginx_ingress.yaml" 
+kubectl apply -f "$SCRIPT_DIR/nginx_ingress.yaml"
+
+# Update /etc/hosts
+if grep -q "hello.example.com" /etc/hosts; then
+  echo "🔁 Updating existing /etc/hosts entry for hello.example.com"
+  sudo sed -i.bak "/hello.example.com/c\\127.0.0.1 hello.example.com" /etc/hosts
+else
+  echo "➕ Adding hello.example.com to /etc/hosts"
+  echo "127.0.0.1 hello.example.com" | sudo tee -a /etc/hosts > /dev/null
+fi
 
 echo "✅ Done! Visit http://hello.example.com to see the Hello World app."
