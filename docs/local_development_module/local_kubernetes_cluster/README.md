@@ -40,11 +40,7 @@ The script automatically installs the following dependencies using Nix package m
 - 🐙 `k3d` — lightweight Kubernetes distribution wrapper.
 - 🧰 `kubectl` — Kubernetes command-line tool to interact with the cluster.
 - 📦 `helm` — package manager for Kubernetes, used to install Traefik and other Helm charts.
-
-Additionally:
-
-- ❇️ **Nix** package manager must be installed prior to running the scripts.
-- 🍺 For macOS users, the script prompts to install Nix via Homebrew.
+- ❇️ **Nix** package manager
 
 ---
 
@@ -66,18 +62,21 @@ Inside of the `scripts/local_kubernetes_cluster/` directory, run:
   kubectl delete crd ingressroutes.traefik.io
   kubectl delete crd middlewares.traefik.io
   # delete other traefik-related CRDs as needed
+  ```
 
-    🛠 Helm Ownership Metadata Errors:
+- 🛠 **Helm Ownership Metadata Errors:**  
     These occur if CRDs exist but Helm doesn’t “own” them. Deleting CRDs as above and reinstalling Traefik CRDs often fixes this.
 
-    🐞 Pods not becoming Ready:
+- 🐞 **Pods not becoming Ready:**  
     Check pod status and logs with:
 
+```
 kubectl get pods -A
 kubectl logs -n kube-system <pod-name>
+```
 
-🔐 Permissions to modify /etc/hosts:
+- 🔐 **Permissions to modify /etc/hosts:**    
 The script requires sudo privileges to modify /etc/hosts. Make sure you run the script in a terminal with sudo rights or enter your password when prompted.
 
-🐳 Docker permissions:
+- 🐳 **Docker permissions:**   
 Ensure your user has permission to run Docker commands without sudo or run the script with appropriate privileges.
