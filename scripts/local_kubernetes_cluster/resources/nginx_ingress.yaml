@@ -1,0 +1,19 @@
+apiVersion: traefik.io/v1alpha1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "hello.example.com"
+      http:
+        paths:
+          - pathType: Exact
+            path: "/"
+            backend:
+              service:
+                name: hello
+                port:
+                  number: 80
