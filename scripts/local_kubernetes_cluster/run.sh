@@ -45,29 +45,31 @@ nix-channel --update
 
 echo "✅ Nix installed and configured."
 
-# Ask user which script to run
-echo
-echo "Which Kubernetes setup do you want to run?"
-select option in "k3d" "kind" "Quit"; do
-  case $option in
-    k3d)
-      echo "Running k3d_nix.sh..."
-      bash ./k3d_nix.sh
-      break
-      ;;
-    kind)
-      echo "Running kind_nix.sh..."
-      bash ./kind_nix.sh
-      break
-      ;;
-    Quit)
-      echo "Exiting."
-      exit 0
-      ;;
-    *)
-      echo "Invalid option. Please choose again."
-      ;;
-  esac
-done
+# Check for two arguments: cluster name and setup type (k3d or kind)
+if [ $# -ne 2 ]; then
+  echo "Usage: $0 <cluster-name> {k3d|kind}"
+  exit 1
+fi
+
+cluster_name=$1
+setup_type=$2
+
+case $setup_type in
+  k3d)
+    echo "Running k3d setup for cluster '$cluster_name'..."
+    # You can pass the cluster name to the k3d script if needed
+    bash ./k3d_nix.sh "$cluster_name"
+    ;;
+  kind)
+    echo "Running kind setup for cluster '$cluster_name'..."
+    # You can pass the cluster name to the kind script if needed
+    bash ./kind_nix.sh "$cluster_name"
+    ;;
+  *)
+    echo "Invalid setup type: $setup_type. Please use 'k3d' or 'kind'."
+    exit 1
+    ;;
+esac
 
 echo "🎉 Done!"
+

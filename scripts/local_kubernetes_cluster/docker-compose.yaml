@@ -1,0 +1,18 @@
+services:
+  test_k3d:
+    container_name: test_k3d
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: /bin/bash ./run.sh test k3d && curl http://hello.example.com
+
+  test_kind:
+    container_name: test_kind
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: /bin/bash ./run.sh test kind && curl http://hello.example.com
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
