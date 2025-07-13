@@ -1,7 +1,7 @@
 install_required_packages() {
   # update the package repositories
   # sudo pacman -Syu 
-  pacman -Syu  --noconfirm
+  sudo pacman -Syu  --noconfirm
 
   # first thing we'll do is install the required packages for yay
   # an AUR helper that makes managing the AUR a bit easier
@@ -42,7 +42,7 @@ install_required_packages() {
     fisher \
     ttf-jetbrains-mono \
     noto-fonts-emoji \
-    neovim \
+    # neovim \
     tmux \
     silicon \
     gcc;
