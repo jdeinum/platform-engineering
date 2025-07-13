@@ -6,13 +6,12 @@ services:
       dockerfile: Dockerfile
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    entrypoint: /bin/bash ./run.sh test k3d && curl http://hello.example.com
-
+    entrypoint: /bin/bash ./run.sh test k3d && curl http://k3d-test-server-0
   test_kind:
     container_name: test_kind
     build:
       context: .
       dockerfile: Dockerfile
-    entrypoint: /bin/bash ./run.sh test kind && curl http://hello.example.com
+    entrypoint: /bin/bash ./run.sh test kind && curl http://k3d-test-server-0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
