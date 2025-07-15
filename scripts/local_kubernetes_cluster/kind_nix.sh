@@ -39,8 +39,8 @@ kubectl wait --for=condition=Ready nodes --all --timeout=60s
 echo "📦 Installing nginx..."
 kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml 
 
-echo "⏳ Waiting for nginx to become ready..."
-kubectl wait -n ingress-nginx --for=condition=Ready pod --all --timeout=120s 
+echo "⏳ Waiting for nginx controller to become ready..."
+kubectl wait -n ingress-nginx --for=condition=Ready pod -l app.kubernetes.io/component=controller --timeout=120s 
 
 # apply the example
 echo "📦 Applying Kubernetes resources..."
