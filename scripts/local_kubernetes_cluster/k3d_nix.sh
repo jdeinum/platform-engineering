@@ -19,7 +19,7 @@ if [ -z "$CLUSTER_NAME" ]; then
 fi
 
 # Ensure required tools are installed
-for pkg in docker k3d kubectl helm; do
+for pkg in docker k3d kubectl; do
   if ! command -v "$pkg" &> /dev/null; then
     echo "📦 Installing $pkg..."
     nix-env -iA "nixpkgs.${pkg}"
@@ -28,10 +28,6 @@ for pkg in docker k3d kubectl helm; do
   fi
 done
 
-# install traefik crds 
-echo "📦  Install traefik CRDs..."
-helm upgrade --install traefik-crds traefik/traefik-crds --namespace default --create-namespace
-
 # Create k3d cluster
 echo "🚀 Creating k3d cluster: $CLUSTER_NAME"
 k3d cluster create "$CLUSTER_NAME" -p '80:80@loadbalancer' --agents 2
@@ -39,10 +35,12 @@ k3d cluster create "$CLUSTER_NAME" -p '80:80@loadbalancer' --agents 2
 echo "⏳ Waiting for nodes to become ready..."
 kubectl wait --for=condition=Ready nodes --all --timeout=60s
 
-echo "⏳ Waiting for traefik to become ready..."
-kubectl wait --for=condition=complete job/helm-install-traefik -n kube-system --timeout=180s
-kubectl wait --for=condition=complete job/helm-install-traefik-crd -n kube-system --timeout=180s
-kubectl wait -n kube-system pod -l app.kubernetes.io/name=traefik --for=condition=Ready --timeout=180s
+# k3d uses k3s which installs Traefik via Helm, wait for it to be deployed
+echo "⏳ Waiting for traefik to be deployed by k3s..."
+# Wait for the helm job to complete first
+kubectl wait -n kube-system job/helm-install-traefik --for=condition=complete --timeout=120s || true
+# Then wait for traefik pod to be ready
+kubectl wait -n kube-system --for=condition=Ready pod -l app.kubernetes.io/name=traefik --timeout=300s
 
 
 # Apply resources
