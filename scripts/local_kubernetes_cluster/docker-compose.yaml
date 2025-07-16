@@ -22,7 +22,7 @@ services:
     networks:
       - dind-network
     entrypoint: |
-      sh -c '
+      bash -c '
         # Wait for Docker daemon to be ready
         until docker version >/dev/null 2>&1; do
           echo "Waiting for Docker daemon..."
@@ -32,18 +32,40 @@ services:
         # Run the actual test
         /bin/bash ./run.sh test k3d
         
+        # Source Nix environment
+        if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+          source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        fi
+        
+        # Wait a bit for everything to stabilize
+        echo "Waiting for cluster to stabilize..."
+        sleep 10
+        
         # Test the deployed application
         echo "Testing Hello World app..."
+        # Use full path to kubectl
+        KUBECTL=/nix/var/nix/profiles/default/bin/kubectl
+        
+        # Wait for the service to be ready
+        echo "Waiting for hello service..."
+        for i in {1..30}; do
+          if $$KUBECTL get svc hello &>/dev/null; then
+            break
+          fi
+          echo "Waiting for service... ($$i/30)"
+          sleep 2
+        done
+        
         # Get the service endpoint
-        SERVICE_IP=$(kubectl get svc hello-world -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || kubectl get svc hello-world -o jsonpath='{.spec.clusterIP}')
-        if [ -n "$SERVICE_IP" ]; then
-          echo "Testing service at IP: $SERVICE_IP"
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://$SERVICE_IP:80)
-          if [ "$HTTP_CODE" = "200" ]; then
+        SERVICE_IP=$$($$KUBECTL get svc hello -o jsonpath='\''{.status.loadBalancer.ingress[0].ip}'\'' 2>/dev/null || $$KUBECTL get svc hello -o jsonpath='\''{.spec.clusterIP}'\'')
+        if [ -n "$$SERVICE_IP" ]; then
+          echo "Testing service at IP: $$SERVICE_IP"
+          HTTP_CODE=$$(curl -s -o /dev/null -w "%{http_code}" http://$$SERVICE_IP:80)
+          if [ "$$HTTP_CODE" = "200" ]; then
             echo "✅ Successfully got 200 response from service"
             exit 0
           else
-            echo "❌ Failed to get 200 response. Got: $HTTP_CODE"
+            echo "❌ Failed to get 200 response. Got: $$HTTP_CODE"
             exit 1
           fi
         else
@@ -64,7 +86,7 @@ services:
     networks:
       - dind-network
     entrypoint: |
-      sh -c '
+      bash -c '
         # Wait for Docker daemon to be ready
         until docker version >/dev/null 2>&1; do
           echo "Waiting for Docker daemon..."
@@ -74,18 +96,40 @@ services:
         # Run the actual test
         /bin/bash ./run.sh test kind
         
+        # Source Nix environment
+        if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+          source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        fi
+        
+        # Wait a bit for everything to stabilize
+        echo "Waiting for cluster to stabilize..."
+        sleep 10
+        
         # Test the deployed application
         echo "Testing Hello World app..."
+        # Use full path to kubectl
+        KUBECTL=/nix/var/nix/profiles/default/bin/kubectl
+        
+        # Wait for the service to be ready
+        echo "Waiting for hello service..."
+        for i in {1..30}; do
+          if $$KUBECTL get svc hello &>/dev/null; then
+            break
+          fi
+          echo "Waiting for service... ($$i/30)"
+          sleep 2
+        done
+        
         # Get the service endpoint
-        SERVICE_IP=$(kubectl get svc hello-world -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || kubectl get svc hello-world -o jsonpath='{.spec.clusterIP}')
-        if [ -n "$SERVICE_IP" ]; then
-          echo "Testing service at IP: $SERVICE_IP"
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://$SERVICE_IP:80)
-          if [ "$HTTP_CODE" = "200" ]; then
+        SERVICE_IP=$$($$KUBECTL get svc hello -o jsonpath='\''{.status.loadBalancer.ingress[0].ip}'\'' 2>/dev/null || $$KUBECTL get svc hello -o jsonpath='\''{.spec.clusterIP}'\'')
+        if [ -n "$$SERVICE_IP" ]; then
+          echo "Testing service at IP: $$SERVICE_IP"
+          HTTP_CODE=$$(curl -s -o /dev/null -w "%{http_code}" http://$$SERVICE_IP:80)
+          if [ "$$HTTP_CODE" = "200" ]; then
             echo "✅ Successfully got 200 response from service"
             exit 0
           else
-            echo "❌ Failed to get 200 response. Got: $HTTP_CODE"
+            echo "❌ Failed to get 200 response. Got: $$HTTP_CODE"
             exit 1
           fi
         else

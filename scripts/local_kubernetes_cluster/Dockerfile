@@ -19,7 +19,12 @@ RUN apt-get update && apt-get install -y \
     apt-get install -y docker-ce-cli && \
     # Clean up
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    # Clean up any previous Nix installation artifacts
+    rm -f /etc/bashrc.backup-before-nix \
+          /etc/profile.d/nix.sh.backup-before-nix \
+          /etc/zshrc.backup-before-nix \
+          /etc/bash.bashrc.backup-before-nix || true
 
 RUN ls /var/run
 

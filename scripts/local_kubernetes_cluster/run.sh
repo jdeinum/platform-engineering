@@ -37,6 +37,16 @@ fi
 if [ -f /etc/profile.d/nix.sh ]; then
   # shellcheck disable=SC1091
   source /etc/profile.d/nix.sh
+elif [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+  # shellcheck disable=SC1091
+  source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+fi
+
+# Start nix-daemon if not running (for containers without systemd)
+if ! pgrep -x nix-daemon > /dev/null; then
+  echo "Starting nix-daemon..."
+  sudo /nix/var/nix/profiles/default/bin/nix-daemon &
+  sleep 2
 fi
 
 echo "Configuring Nix channel to stable..."
