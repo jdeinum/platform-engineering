@@ -55,7 +55,7 @@ nvim    # Open Neovim editor
 cd linux_env
 
 # Start the containerized environment
-docker compose run --build dev && docker compose down
+docker compose run dev && docker compose down
 ```
 
 ### 💻 Option 3: Full Installation
