@@ -1,0 +1,30 @@
+# Runs deny to check if we are using anything we shouldn't be
+# deny.toml in the root dir can be modified to change whats allowed and what
+# isn't
+
+# only needs to need the code
+permissions:
+  contents: read
+
+# if you happen to push commits multiple times once a PR is open, this just
+# cancels the old runs to save resources
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+name: audit
+on:
+  schedule:
+    - cron: "0 0 * * 0"
+  push:
+    paths:
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
+jobs:
+  security_audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@cargo-deny
+      - name: Scan for vulnerabilities
+        run: cargo deny check advisories

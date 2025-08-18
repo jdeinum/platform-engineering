@@ -1,0 +1,10 @@
+As a platform engineer,
+I want to use GitHub Actions to automate infrastructure and application CI workflows,
+So that I can ensure repeatable, automated, and secure deployments.
+
+Acceptance Criteria:
+• Set up a GitHub Actions pipeline for:
+• Linting, testing, and validating Terraform/OpenTofu, Pulumi, and Bicep code.
+• Running security checks using tools like tfsec, checkov, OPA, and conftest.
+• Building and testing containerized applications before deployment.
+• Demonstrate how to optimize GitHub Actions workflows with caching and matrix builds.
