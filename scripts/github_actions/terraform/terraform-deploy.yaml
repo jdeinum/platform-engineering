@@ -1,0 +1,52 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - '.github/workflows/terraform-deploy.yml'
+
+env:
+  TF_VAR_example: ${{ secrets.TF_VAR_EXAMPLE }}
+
+jobs:
+  deploy:
+    name: Deploy Terraform
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply tfplan
+
+      - name: Comment Deployment
+        uses: actions/github-script@v8
+        if: always()
+        with:
+          script: |
+            const sha = context.sha.substring(0, 7);
+            const status = '${{ job.status }}' === 'success' ? '✅ Deployed' : '❌ Failed';
+
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: `${status} Terraform deployment for commit ${sha}`
+            });

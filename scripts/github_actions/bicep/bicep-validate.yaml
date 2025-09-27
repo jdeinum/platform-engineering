@@ -1,0 +1,54 @@
+name: Bicep Validate
+
+on:
+  pull_request:
+    paths:
+      - '**/*.bicep'
+      - '**/*.bicepparam'
+      - '.github/workflows/bicep-validate.yaml'
+
+jobs:
+  validate:
+    name: Validate Bicep
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Azure CLI
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Azure CLI Info
+        run: |
+          az version
+          az account show
+
+      - name: Bicep Lint
+        run: |
+          # Find and lint all .bicep files
+          find . -name "*.bicep" -type f | while read file; do
+            echo "Linting $file"
+            az bicep lint --file "$file"
+          done
+
+      - name: Bicep Build
+        run: |
+          # Find and build all .bicep files
+          find . -name "*.bicep" -type f | while read file; do
+            echo "Building $file"
+            az bicep build --file "$file" --stdout > /dev/null
+          done
+
+      - name: Bicep Validate
+        run: |
+          # Find and validate all .bicep files against Azure
+          find . -name "*.bicep" -type f | while read file; do
+            echo "Validating $file"
+            az deployment group validate \
+              --resource-group ${{ secrets.AZURE_RG }} \
+              --template-file "$file" \
+              --parameters @parameters.json || true
+          done

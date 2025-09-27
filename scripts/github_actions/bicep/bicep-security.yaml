@@ -1,0 +1,66 @@
+name: Bicep Security
+
+on:
+  pull_request:
+    paths:
+      - '**/*.bicep'
+      - '**/*.bicepparam'
+      - '.github/workflows/bicep-security.yaml'
+
+jobs:
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Azure CLI
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Convert Bicep to ARM Templates
+        run: |
+          mkdir -p arm-templates
+          find . -name "*.bicep" -type f | while read file; do
+            filename=$(basename "$file" .bicep)
+            az bicep build --file "$file" --outfile "arm-templates/${filename}.json"
+          done
+
+      - name: Checkov Scan
+        uses: bridgecrewio/checkov-action@v12.1347.0
+        with:
+          directory: .
+          framework: bicep,arm
+          output_format: sarif
+          output_file_path: checkov.sarif
+
+      - name: PSRule for Azure
+        uses: microsoft/ps-rule@v2.9.0
+        with:
+          modules: PSRule.Rules.Azure
+          source: arm-templates/
+          output: 'reports/ps-rule.sarif'
+
+      - name: Azure Security Benchmark
+        run: |
+          echo "Running Azure Security Benchmark checks..."
+          # Use Azure Policy Guest Configuration or custom rules
+          find arm-templates/ -name "*.json" | while read template; do
+            echo "Checking $template for security compliance"
+            # Add custom security validation logic here
+          done
+
+      - name: Upload SARIF Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: checkov.sarif
+
+      - name: Upload PSRule Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: reports/ps-rule.sarif

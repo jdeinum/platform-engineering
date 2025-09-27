@@ -33,9 +33,12 @@ Each workflow can be triggered by:
 
 ## Examples
 
-This repository contains several examples on hhow to use github actions. We'll
-be focusing our attention on the actual building and deploying of an application
-inn Rust, but also include some workflows for cloud deployments. For each of
-these, see the READMEs below:
+This repository contains several examples on how to use GitHub Actions. We'll
+be focusing our attention on the actual building and deploying of applications
+in Rust, but also include comprehensive workflows for Infrastructure as Code (IaC)
+deployments. For each of these, see the READMEs below:
 
 1. [Rust](./rust.md)
+2. [Terraform](./terraform.md)
+3. [Bicep](./bicep.md)
+4. [Pulumi](./pulumi.md)

@@ -1,0 +1,36 @@
+name: Terraform Documentation
+
+on:
+  pull_request:
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - '.github/workflows/terraform-docs.yml'
+
+jobs:
+  docs:
+    name: Generate Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate Terraform Docs
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: .
+          output-file: README.md
+          output-method: inject
+          git-push: true
+          git-commit-message: "docs: update terraform documentation"
+
+      - name: Validate Documentation
+        run: |
+          if [ ! -s README.md ]; then
+            echo "Documentation generation failed - README.md is empty"
+            exit 1
+          fi
+          echo "Documentation generated successfully"

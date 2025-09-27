@@ -1,0 +1,66 @@
+name: Terraform Plan
+
+on:
+  pull_request:
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - '.github/workflows/terraform-plan.yml'
+
+env:
+  TF_VAR_example: ${{ secrets.TF_VAR_EXAMPLE }}
+
+jobs:
+  plan:
+    name: Plan Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan -no-color -out=tfplan
+          terraform show -no-color tfplan > plan_output.txt
+
+      - name: Comment Plan
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('plan_output.txt', 'utf8');
+            const maxLength = 65000;
+            const truncatedPlan = plan.length > maxLength ?
+              plan.substring(0, maxLength) + '\n\n... (truncated)' : plan;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Terraform Plan\n\`\`\`\n${truncatedPlan}\n\`\`\``
+            });
+
+      - name: Infracost
+        uses: infracost/actions/setup@v3
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+      - name: Generate Infracost breakdown
+        run: |
+          infracost breakdown --path . --format json --out-file infracost.json
+
+      - name: Comment Cost Estimate
+        uses: infracost/actions/comment@v3
+        with:
+          path: infracost.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}

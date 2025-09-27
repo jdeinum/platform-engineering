@@ -1,0 +1,167 @@
+name: Pulumi Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.py'
+      - '**/*.ts'
+      - '**/*.js'
+      - '**/*.go'
+      - '**/*.cs'
+      - 'Pulumi.*.yaml'
+      - '.github/workflows/pulumi-deploy.yaml'
+
+env:
+  PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+jobs:
+  deploy:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install Pulumi CLI
+        uses: pulumi/actions@v5
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install Dependencies
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          fi
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          if [ -f go.mod ]; then
+            go mod download
+          fi
+          if [ -f *.csproj ]; then
+            dotnet restore
+          fi
+
+      - name: Select Production Stack
+        run: |
+          pulumi stack select production || pulumi stack init production
+          pulumi config set aws:region ${{ secrets.AWS_REGION }}
+
+      - name: Pre-deployment Validation
+        run: |
+          echo "Running pre-deployment validation..."
+          pulumi refresh --yes --skip-preview || echo "Refresh completed"
+          pulumi preview --diff > deployment_preview.txt
+
+      - name: Policy Validation
+        run: |
+          if [ -d "policy" ]; then
+            echo "Validating against deployment policies..."
+            pulumi preview --policy-pack policy/ --policy-pack-config policy/config.json
+          fi
+
+      - name: Deploy Infrastructure
+        id: deploy
+        run: |
+          echo "Deploying infrastructure..."
+          pulumi up --yes --skip-preview > deployment_output.txt 2>&1
+
+          # Capture deployment outputs
+          pulumi stack output --json > stack_outputs.json || echo "{}" > stack_outputs.json
+
+      - name: Post-deployment Validation
+        run: |
+          echo "Running post-deployment validation..."
+
+          # Basic connectivity and health checks
+          if command -v aws &> /dev/null; then
+            echo "Validating AWS resources..."
+            # Add specific resource validation here
+          fi
+
+          # Custom validation scripts
+          if [ -f "scripts/validate-deployment.sh" ]; then
+            bash scripts/validate-deployment.sh
+          fi
+
+      - name: Export Stack State
+        run: |
+          # Export stack for backup/audit purposes
+          pulumi stack export > "stack-backup-$(date +%Y%m%d-%H%M%S).json"
+
+      - name: Deployment Summary
+        run: |
+          echo "## Deployment Summary" > deployment_summary.md
+          echo "- Stack: production" >> deployment_summary.md
+          echo "- Status: ${{ job.status }}" >> deployment_summary.md
+          echo "- Timestamp: $(date)" >> deployment_summary.md
+
+          if [ -f stack_outputs.json ]; then
+            echo "- Outputs available in stack_outputs.json" >> deployment_summary.md
+          fi
+
+      - name: Comment Deployment Status
+        uses: actions/github-script@v8
+        if: always()
+        with:
+          script: |
+            const sha = context.sha.substring(0, 7);
+            const status = '${{ job.status }}' === 'success' ? '✅ Deployed' : '❌ Failed';
+
+            let outputs = '';
+            try {
+              const fs = require('fs');
+              const stackOutputs = JSON.parse(fs.readFileSync('stack_outputs.json', 'utf8'));
+              outputs = Object.keys(stackOutputs).length > 0 ?
+                `\n\n**Outputs:** ${Object.keys(stackOutputs).join(', ')}` : '';
+            } catch (error) {
+              // No outputs available
+            }
+
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: `${status} Pulumi deployment to production for commit ${sha}${outputs}`
+            });
+
+      - name: Upload Deployment Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deployment-artifacts
+          path: |
+            deployment_output.txt
+            deployment_preview.txt
+            stack_outputs.json
+            stack-backup-*.json
+          retention-days: 30

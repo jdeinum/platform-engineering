@@ -1,0 +1,88 @@
+name: Bicep Documentation
+
+on:
+  pull_request:
+    paths:
+      - '**/*.bicep'
+      - '**/*.bicepparam'
+      - '.github/workflows/bicep-docs.yaml'
+
+jobs:
+  docs:
+    name: Generate Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Azure CLI
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Bicep Documentation Tools
+        run: |
+          npm install -g @azure/bicep-docs-generator || echo "Using alternative documentation method"
+
+      - name: Generate ARM Templates for Documentation
+        run: |
+          mkdir -p docs/arm-templates
+          find . -name "*.bicep" -type f | while read file; do
+            filename=$(basename "$file" .bicep)
+            az bicep build --file "$file" --outfile "docs/arm-templates/${filename}.json"
+          done
+
+      - name: Generate Bicep Documentation
+        run: |
+          mkdir -p docs/bicep
+
+          # Create documentation for each Bicep file
+          find . -name "*.bicep" -type f | while read file; do
+            filename=$(basename "$file" .bicep)
+
+            echo "# $filename Bicep Template" > "docs/bicep/${filename}.md"
+            echo "" >> "docs/bicep/${filename}.md"
+            echo "## Description" >> "docs/bicep/${filename}.md"
+            echo "Generated from: \`$file\`" >> "docs/bicep/${filename}.md"
+            echo "" >> "docs/bicep/${filename}.md"
+
+            # Extract parameters and outputs
+            echo "## Parameters" >> "docs/bicep/${filename}.md"
+            grep -n "^param " "$file" | sed 's/^/- /' >> "docs/bicep/${filename}.md" || echo "No parameters found" >> "docs/bicep/${filename}.md"
+            echo "" >> "docs/bicep/${filename}.md"
+
+            echo "## Outputs" >> "docs/bicep/${filename}.md"
+            grep -n "^output " "$file" | sed 's/^/- /' >> "docs/bicep/${filename}.md" || echo "No outputs found" >> "docs/bicep/${filename}.md"
+            echo "" >> "docs/bicep/${filename}.md"
+
+            echo "## Resources" >> "docs/bicep/${filename}.md"
+            grep -n "^resource " "$file" | sed 's/^/- /' >> "docs/bicep/${filename}.md" || echo "No resources found" >> "docs/bicep/${filename}.md"
+          done
+
+      - name: Update Main README
+        run: |
+          if [ -f README.md ]; then
+            # Update existing README with Bicep documentation links
+            echo "" >> README.md
+            echo "## Bicep Templates" >> README.md
+            find docs/bicep -name "*.md" | while read doc; do
+              title=$(basename "$doc" .md)
+              echo "- [$title]($doc)" >> README.md
+            done
+          fi
+
+      - name: Commit Documentation
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/ README.md || true
+          git diff --cached --quiet || git commit -m "docs: update Bicep documentation"
+          git push || true

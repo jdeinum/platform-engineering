@@ -18,7 +18,7 @@ these things is an excellent way to learn about them.
 
 ## Stages
 
-Instead of thining of CI as a black box, I think it's much easier to think about
+Instead of thinking of CI as a black box, I think it's much easier to think about
 it as a series of steps, which may depend on one-another. These steps may only
 need to be run at particular stages of software deployment (am I building a
 release? Or just merging code upstream? ). Consider what your needs are and
@@ -31,16 +31,16 @@ software. Anytime we move our code somewhere people will access it, we
 need to make sure it behaves as we expect it to. Tests are typically run using
 cargo, which is Rusts official package manager and build tool. I choose to use
 [nextest](https://nexte.st/) since it has a (seemingly) better performance
-model. 
+model.
 
 Another useful tool that you can choose to run during CI is
 [cargo-mutants](https://mutants.rs/). Mutants gives you a general measure of
-test quality through *logic chaos engineering*, which is just a fancy way of
+test quality through _logic chaos engineering_, which is just a fancy way of
 saying that it changes your source code before it runs tests and makes sure
 something fails.
 
 If your software consists of a pipeline of several stages, consider using
-snapshot testing with [insta](https://docs.rs/insta/1.41.1/insta/).  Snapshot testing
+snapshot testing with [insta](https://docs.rs/insta/1.41.1/insta/). Snapshot testing
 is a form of [data driven
 testing](https://matklad.github.io/2021/05/31/how-to-test.html#Data-Driven-Testing).
 It requires some extra work to maintain (mostly making sure you check your
@@ -50,8 +50,7 @@ Finally, test coverage can be a useful metric to help determine if you are
 testing appropriately. [Codecov](https://about.codecov.io/) is an excellent tool
 for generating test coverage reports. One thing to be careful of is writing poor
 quality tests just to get a higher test coverage score. Make sure the tests are
-meaninful, and if certain paths are not testable, just make codecov ignore them.
-
+meaningful, and if certain paths are not testable, just make codecov ignore them.
 
 ### Correctness
 
@@ -59,9 +58,9 @@ While testing proves correctness in particular code paths, a passing test suite
 does not mean that your code doesn't have bugs in it. Typically these bugs are
 non-deterministic, and may be very difficult to hit. There are many strategies
 and tools you can use to either snuff these bugs out, or prove that they do not
-exist. 
+exist.
 
-#### Property Based Testing 
+#### Property Based Testing
 
 Property based testing is an extension of
 [fuzzing](https://rust-fuzz.github.io/book/introduction.html) that ensures
@@ -88,24 +87,24 @@ fn completion_works_with_real_standard_library() {
 }
 ```
 
-#### Verifiers 
+#### Verifiers
 
 I won't be talking in detail about all of these, and instead you should consider
 the safety / correctness requirements you need and determine if any of these are
 helpful.
 
 - [loom](https://docs.rs/loom/0.7.2/loom/) deterministically explores all of the
-  execution paths in multithreaded code. 
+  execution paths in multithreaded code.
 - [kani](https://model-checking.github.io/kani/) is a formal verifier for rust
-code, helping to catch undefined behavior.
+  code, helping to catch undefined behavior.
 - [shuttle](https://docs.rs/shuttle/0.8.0/shuttle/) is simmilar to loom but
-doesn't exhaustively search the problem space. In this way it is similar to
-property based testing.
+  doesn't exhaustively search the problem space. In this way it is similar to
+  property based testing.
 - [turmoil](https://docs.rs/turmoil/0.6.4/turmoil/) let's you build
-deterministic simulation tests, a step towards what something like
-[antithesis](https://github.com/AntithesisHQ) would do.
+  deterministic simulation tests, a step towards what something like
+  [antithesis](https://github.com/AntithesisHQ) would do.
 - [miri](https://github.com/rust-lang/miri) catches undefined behavior, and is
-itself a fornm of deterministic simulation testing.
+  itself a fornm of deterministic simulation testing.
 - Thread santizers, address sanitizers, valgrind, etc are language independent ways
   to catch undesired behavior.
 
@@ -126,11 +125,10 @@ in an interleaved fashion to help reduce external noise.
 One final note: For me, benchmarking takes the crown of the most difficult form
 of metrics to reliably use. Not only do you need to understand the kind of
 load your system expects (closed, open, semi-open), but you are also at the
-mercy of factors outside of your control. It is *really really* easy to get
+mercy of factors outside of your control. It is _really really_ easy to get
 incorrect results and run with them. Make sure you understand what it is you are
 trying to benchmark, and make sure that the way you are capturing it is
-accurate. 
-
+accurate.
 
 ### Code Quality
 
@@ -139,8 +137,7 @@ and quality are important. Rust is thankful to have really good tooling through
 [clippy](https://doc.rust-lang.org/stable/clippy/usage.html) and
 [cargo-fmt](https://doc.rust-lang.org/nightly/cargo/commands/cargo-fmt.html),
 that can be leveraged to ensure code quality. Tools like these should be run on
-every pull request and pushg to master to help maintain code quality.
-
+every pull request and push to master to help maintain code quality.
 
 ### Building
 
@@ -151,8 +148,8 @@ it's probably to run on docker.
 
 When building docker images, we have several goals in mind:
 
-1. We want to avoid doing unecessary work 
-2. We want our final image to be as small as possible 
+1. We want to avoid doing unecessary work
+2. We want our final image to be as small as possible
 
 The best way (that I know of) to avoid doing unecessary work is to ensure that
 we don't compile our dependencies if they haven't changed.
@@ -167,14 +164,13 @@ dependencies we need. Personally alpine is great for this, and is what I would
 recommend most of the time. If you need packages that aren't available on
 alpine, `debian-slim` is the next image I turn to.
 
-
 ### Security
 
 Security is often ignored for the sake of releasing code quickly. Thankfully CI
 can add some checks that help maintain your security posture that run really
 quickly. [cargo-deny](https://docs.rs/cargo-deny/latest/cargo_deny/) is the
 defacto tool for catching security issues, whether it be unmaintained crates,
-known vulnerabilities, or license issues. 
+known vulnerabilities, or license issues.
 
 `cargo-deny` should be run each time your dependencies are updated, but also
 on a weekly basis because CVE databases may be updated during that time.
@@ -197,5 +193,26 @@ While some actions like Trivy contain their own cache, we have to setup caching
 ourselves for our rust actions. Thankfully, there is an action that
 [sets](https://github.com/marketplace/actions/rust-cache) up the cache for you.
 Caching our dependencies and our cargo binary directory DRASTICALLY reduces the
-amount of time your workflows take to run. 
+amount of time your workflows take to run.
 
+Caches reduce the amount of time your code needs to compile because the cache
+will store intermediate software artifacts. For a more general introduction on
+caching, look at the [wiki](<https://en.wikipedia.org/wiki/Cache_(computing)>).
+
+
+## Matrix Builds 
+
+Inside of the Rust check [action](../../scripts/github_actions/rust/rust_check.yaml), you see a section with a matrix defined:
+
+```yaml
+strategy:
+  fail-fast: false
+  matrix:
+    # Get early warning of new lints which are regularly introduced in beta channels.
+    toolchain: [stable, beta]
+```
+
+Matrix builds let you define multiple runs of your workflow each operating with
+different data in the form of variables. Matrix builds are for workflows what
+functions are in most other programming languages. The code stays the same, but
+you can pass different input into it.

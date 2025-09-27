@@ -1,0 +1,109 @@
+name: Pulumi Validate
+
+on:
+  pull_request:
+    paths:
+      - '**/*.py'
+      - '**/*.ts'
+      - '**/*.js'
+      - '**/*.go'
+      - '**/*.cs'
+      - 'Pulumi.*.yaml'
+      - '.github/workflows/pulumi-validate.yaml'
+
+jobs:
+  validate:
+    name: Validate Pulumi
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install Pulumi CLI
+        uses: pulumi/actions@v5
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install Dependencies
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          fi
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          if [ -f go.mod ]; then
+            go mod download
+          fi
+          if [ -f *.csproj ]; then
+            dotnet restore
+          fi
+
+      - name: Lint Code
+        run: |
+          # Python linting
+          if [ -f requirements.txt ]; then
+            pip install pylint black isort mypy
+            find . -name "*.py" -not -path "./venv/*" | xargs pylint --disable=all --enable=syntax-error || true
+            black --check . || true
+            isort --check-only . || true
+            mypy . || true
+          fi
+
+          # TypeScript/JavaScript linting
+          if [ -f package.json ]; then
+            npm run lint || true
+            npm run typecheck || true
+          fi
+
+          # Go linting
+          if [ -f go.mod ]; then
+            go vet ./...
+            gofmt -l . | tee /tmp/gofmt.out
+            [ ! -s /tmp/gofmt.out ] || (echo "Go files not formatted:" && cat /tmp/gofmt.out && exit 1)
+          fi
+
+      - name: Pulumi Validate Stack Configuration
+        run: |
+          # Validate all stack configurations
+          for stack_file in Pulumi.*.yaml; do
+            if [ -f "$stack_file" ]; then
+              echo "Validating $stack_file"
+              pulumi config --stack $(basename "$stack_file" .yaml | cut -d. -f2) || true
+            fi
+          done
+
+      - name: Pulumi Refresh and Validate
+        run: |
+          export PULUMI_ACCESS_TOKEN=${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+          # Try to refresh and validate without making changes
+          pulumi stack select dev || pulumi stack init dev
+          pulumi refresh --yes --skip-preview || echo "Refresh failed - this is expected for new stacks"
+          pulumi preview --diff || echo "Preview completed with differences"

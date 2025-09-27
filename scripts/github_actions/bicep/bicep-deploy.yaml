@@ -1,0 +1,83 @@
+name: Bicep Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.bicep'
+      - '**/*.bicepparam'
+      - '.github/workflows/bicep-deploy.yaml'
+
+env:
+  AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RG }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+jobs:
+  deploy:
+    name: Deploy Bicep
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Azure CLI
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set Azure Subscription
+        run: |
+          az account set --subscription $AZURE_SUBSCRIPTION_ID
+          az account show
+
+      - name: Pre-deployment Validation
+        run: |
+          find . -name "*.bicep" -type f | while read file; do
+            echo "Validating $file before deployment"
+            az deployment group validate \
+              --resource-group $AZURE_RESOURCE_GROUP \
+              --template-file "$file" \
+              --parameters @parameters.json
+          done
+
+      - name: Deploy Bicep Templates
+        id: deploy
+        run: |
+          find . -name "*.bicep" -type f | while read file; do
+            echo "Deploying $file"
+            deployment_name="deploy-$(basename "$file" .bicep)-$(date +%Y%m%d-%H%M%S)"
+
+            az deployment group create \
+              --resource-group $AZURE_RESOURCE_GROUP \
+              --name "$deployment_name" \
+              --template-file "$file" \
+              --parameters @parameters.json \
+              --verbose
+          done
+
+      - name: Get Deployment Outputs
+        run: |
+          # Retrieve outputs from latest deployments
+          az deployment group list \
+            --resource-group $AZURE_RESOURCE_GROUP \
+            --query "[?starts_with(name, 'deploy-')].{Name:name, State:properties.provisioningState, Timestamp:properties.timestamp}" \
+            --output table
+
+      - name: Comment Deployment Status
+        uses: actions/github-script@v8
+        if: always()
+        with:
+          script: |
+            const sha = context.sha.substring(0, 7);
+            const status = '${{ job.status }}' === 'success' ? '✅ Deployed' : '❌ Failed';
+            const resourceGroup = process.env.AZURE_RESOURCE_GROUP;
+
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: `${status} Bicep deployment to ${resourceGroup} for commit ${sha}`
+            });
